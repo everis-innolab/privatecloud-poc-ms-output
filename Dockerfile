@@ -28,15 +28,17 @@ RUN tar -zxvf setuptools-1.4.2.tar.gz && \
 	python setuptools-1.4.2/setup.py install &&\
 	easy_install pip
 
-COPY OutputHandlerNode /tmp/OutputHandlerNode
-COPY EurekaLabLibrary /tmp/EurekaLabLibrary
+COPY src /tmp/ms-output/src 
+COPY test /tmp/ms-output/test
+copy setup.py /tmp/ms-output/setup.py
+COPY python-eureka-library  /tmp/python-eureka-library 
 
-RUN cd /tmp/EurekaLabLibrary/ && python setup.py install 
-RUN pip install -r /tmp/OutputHandlerNode/requirements.txt
+RUN cd /tmp/python-eureka-library/ && python setup.py install 
+RUN pip install -r /tmp/ms-output/requirements.txt
 
 # El comando por defecto sera un interprete de Python
 EXPOSE 9992
-WORKDIR /tmp/OutputHandlerNode
+WORKDIR /tmp/ms-output
 ENTRYPOINT ["python"]
 CMD ["src/launcher.py"]
 

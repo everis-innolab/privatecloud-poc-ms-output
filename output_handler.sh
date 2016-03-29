@@ -1,9 +1,7 @@
 #!/bin/bash
-cp -r ../python/OutputHandlerNode .
-cp -r ../python/EurekaLabLibrary .
+cp -r ../python-eureka-library .
 docker build -f output_handler .
-rm -r OutputHandlerNode
-rm -r EurekaLabLibrary
+rm -r python-eureka-library 
 
 
 
