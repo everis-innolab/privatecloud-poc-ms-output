@@ -30,7 +30,8 @@ RUN tar -zxvf setuptools-1.4.2.tar.gz && \
 
 COPY src /tmp/ms-output/src 
 COPY test /tmp/ms-output/test
-copy setup.py /tmp/ms-output/setup.py
+COPY setup.py /tmp/ms-output/setup.py
+COPY requirements.txt /tmp/ms-output/requirements.txt
 COPY python-eureka-library  /tmp/python-eureka-library 
 
 RUN cd /tmp/python-eureka-library/ && python setup.py install 
