@@ -28,7 +28,7 @@ DEV_EUREKA_PORT_ENV = "80"
 DEV_OUTPUT_HOST_ENV = "localhost"
 DEV_OUTPUT_PORT_ENV = "9992"
 
-
+OUTPUT_EXTERIOR_HOSTNAME = "ms-output-fd.cloud.everis.com"
 
 """
 MySQL - Es probable que el MySQL este fuera de openshift. Lo que sí es seguro
