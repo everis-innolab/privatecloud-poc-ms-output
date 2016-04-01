@@ -1,9 +1,3 @@
 #!/bin/bash
-cp -r ../python-eureka-library .
-docker build -f Dockerfile .
-rm -r python-eureka-library
-
-
-
-
-
+#Es necesario copiar el directorio python-eureka-library al directorio actual
+docker build -t 172.30.179.28:5000/fraud-detector/ms-output:latest .
