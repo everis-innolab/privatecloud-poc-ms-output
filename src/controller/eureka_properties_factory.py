@@ -50,7 +50,11 @@ class EurekaPropertiesFactory(Singleton):
         )
 
     def __read_output_host_and_port_from_env(self):
-        host = os.environ.get(OUTPUT_HOST_ENV)
+        # host = os.environ.get(OUTPUT_HOST_ENV)
+        # El hostname debe ser accesible desde el exterior (El codigo del
+        # web-frontend se ejecuta en el navegador del cliente, por lo que tiene
+        # que pode abrir una conexion desde fuera)
+        host = OUTPUT_EXTERIOR_HOSTNAME
         port = int(os.environ.get(OUTPUT_PORT_ENV))
         if host is None or port is None:
             raise EnviromentVariablesNotSet()

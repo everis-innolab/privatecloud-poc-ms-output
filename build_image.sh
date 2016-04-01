@@ -1,7 +1,5 @@
 #!/bin/bash
-cp -r ../python-eureka-library .
-docker build -f Dockerfile .
-rm -r python-eureka-library
+docker build -t docker-registry.cloud.everis.com/fraud-detector/ms-output:latest .
 
 
 
