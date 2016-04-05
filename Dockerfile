@@ -38,7 +38,7 @@ RUN cd /tmp/python-eureka-library/ && python setup.py install
 RUN pip install -r /tmp/ms-output/requirements.txt
 
 # El comando por defecto sera un interprete de Python
-EXPOSE 9992
+EXPOSE 80
 WORKDIR /tmp/ms-output
 ENTRYPOINT ["python"]
 CMD ["src/launcher.py"]
