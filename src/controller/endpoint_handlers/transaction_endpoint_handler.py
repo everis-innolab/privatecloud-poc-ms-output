@@ -28,12 +28,16 @@ class TransactionEndpointHandler(BaseEndpointHandler):
 
     def handle_transaction_post(self):
         try:
+            self._logger.info("Processing Transaction Request")
             transaction = self.__get_transaction_from_body()
+            self._logger.info("Saving Transaction exception")
             TransactionDAO().save_transaction(transaction)
             self.__send_transaction_to_all_websockets(transaction)
             self._logger.info("Handled Transaction Request")
             return self.return_response("OK", 201)
+
         except MalformedTransactionException, e:
+            self._logger.info("Malformed Transaction, returnin 400")
             return self.return_response(e.message, 400)
 
     def __get_transaction_from_body(self):
