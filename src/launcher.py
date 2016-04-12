@@ -1,11 +1,15 @@
 import sys
 import os
 sys.path.append(os.getcwd())
+from constants import *
+#TODO This is necessary for dev, but it should be changed to a more formal way.
+if sys.platform=="win32":
+    os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
+    os.environ[MYSQL_PORT_ENV]=DEV_MYSQL_PORT
+
 from src.controller.eureka_properties_factory import EurekaPropertiesFactory
-import constants
 from controller.logs.logger_factory import LoggerFactory
 from eurekalab.client import EurekaClient
-from constants import *
 from controller.endpoint_handlers.transaction_endpoint_handler import \
     TransactionEndpointHandler
 from controller.eureka_agent import EurekaAgent
@@ -27,12 +31,15 @@ class Main():
             my_handler = \
                 TransactionEndpointHandler(self.__eureka_agent, self.__logger)
             wiring = [
-                (TRANSACTION_ENDPOINT, "POST", my_handler.handle_transaction_post),
-                (WEBSOCKET_ENDPOINT, "GET", my_handler.handle_websocket)
+                (TRANSACTION_ENDPOINT, "POST", my_handler.handle_transaction_post_request),
+                (WEBSOCKET_ENDPOINT, "GET", my_handler.handle_websocket_request),
+                (FILTER_ENDPOINT, "GET", my_handler.handle_filter_get_request)
             ]
+
             runner = ServiceRunner(
                 my_handler, wiring, self.__eureka_agent, web_socket=True
             )
+
             runner.start()
         except Exception, e:
             self.__logger.exception("Exception Launching Server")
@@ -42,17 +49,16 @@ class Main():
             self.__logger.info("De-register in eureka")
 
 if __name__ == "__main__":
-    # Lanzar con WorkingDirectory en ms-cloud\python\OutputHandlerNode
+    # Lanzar con WorkingDirectory en ..../privatecloud-poc/ms-output
 
-    logger = LoggerFactory.get_logger(
-        constants.LOG_FILE, constants.DEFAULT_LOGGIN_LEVEL
-    )
+    logger = LoggerFactory.get_logger(LOG_FILE, DEFAULT_LOGGIN_LEVEL)
 
     factory = EurekaPropertiesFactory()
     if "--develop" in sys.argv or "--development" in sys.argv:
         eureka_dto = factory.get_development_eureka_server_dto()
         my_app_dto = factory.get_development_app_instance_dto()
         logger.info("Launching OutputHandler service in development mode")
+
     else:
         eureka_dto = factory.get_eureka_server_dto()
         my_app_dto = factory.get_app_instance_dto()

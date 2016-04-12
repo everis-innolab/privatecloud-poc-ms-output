@@ -6,8 +6,6 @@ RUN echo 'proxy=http://10.121.8.100:8080/' >> /etc/yum.conf
 ENV https_proxy="https://10.121.8.100:8080/" 
 ENV http_proxy="http://10.121.8.100:8080/"
 
-
-
 # YUM Updates and libraries
 RUN yum update -y &&\
 	yum install lapack-devel -y &&\

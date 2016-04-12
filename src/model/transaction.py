@@ -25,6 +25,9 @@ class Transaction(BaseModel):
     commerce_country_name = CharField()
     commerce_account_iban = CharField(null= False)
     transaction_datetime = CharField()
+    fraud_code = IntegerField()
+    client_name = CharField()
+    client_last_name = CharField()
 
 
     def __eq__(self, other):
@@ -40,7 +43,10 @@ class Transaction(BaseModel):
             self.commerce_country == other.commerce_country and
             self.commerce_country_name == other.commerce_country_name and
             self.commerce_account_iban == other.commerce_account_iban and
-            self.transaction_datetime == other.transaction_datetime
+            self.transaction_datetime == other.transaction_datetime and
+            self.fraud_code == other.fraud_code and
+            self.client_name == other.client_name and
+            self.client_last_name == other.client_laste_name
         )
 
     def __str__(self):
@@ -56,5 +62,8 @@ class Transaction(BaseModel):
             'commerce_country: %s\n'%str(self.commerce_country)+
             'commerce_country_name: %s\n'%str(self.commerce_country_name)+
             'commerce_account_iban: %s\n'%str(self.commerce_account_iban)+
-            'transaction_datetime: %s\n'%str(self.transaction_datetime)
+            'transaction_datetime: %s\n'%str(self.transaction_datetime) +
+            'client_name: %s\n'%str(self.client_name) +
+            'client_last_name: %s\n'%str(self.client_last_name) +
+            'fraud_code: %s\n'%str(self.fraud_code)
         )
