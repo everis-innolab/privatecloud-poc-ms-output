@@ -9,6 +9,7 @@ HEALTH_ENDPOINT="/health"
 STATUS_ENDPOINT="/status"
 HOMEPAGE_ENDPOINT="/"
 WEBSOCKET_ENDPOINT="/websocket"
+FILTER_ENDPOINT="/filter"
 
 # Do not change, the python path of execution is xxx\OutputHandlerNode
 LOG_FILE = "./src/controller/logs/processing_node.log"
@@ -22,26 +23,23 @@ EUREKA_PORT_ENV = "EUREKA_SERVICE_SERVICE_PORT"
 OUTPUT_HOST_ENV = "MS_OUTPUT_SERVICE_SERVICE_HOST"
 OUTPUT_PORT_ENV = "MS_OUTPUT_SERVICE_SERVICE_PORT"
 
-#Values to hard-code into env variables when launching in debug
+MYSQL_HOST_ENV="MYSQL_SERVICE_SERVICE_HOST"
+MYSQL_PORT_ENV = "MYSQL_SERVICE_SERVICE_PORT"
+DEV_MYSQL_HOST="192.168.56.102"
+DEV_MYSQL_PORT = "3306"
+MYSQL_DATABASE = "transactions"
+MYSQL_USER = "innocloud"
+MYSQL_PASS = "1234"
+
+# Values to hard-code into env variables when launching in debug
 DEV_EUREKA_HOST_ENV = "eureka-fd.cloud.everis.com"
 DEV_EUREKA_PORT_ENV = "80"
+# DEV_EUREKA_HOST_ENV = "192.168.56.102"
+# DEV_EUREKA_PORT_ENV = "8080"
+
 DEV_OUTPUT_HOST_ENV = "localhost"
 DEV_OUTPUT_PORT_ENV = "9992"
 
 OUTPUT_EXTERIOR_HOSTNAME = "ms-output-fd.cloud.everis.com"
 
-"""
-MySQL - Es probable que el MySQL este fuera de openshift. Lo que sí es seguro
-es que no estará registrado en Eureka. Por lo tanto podemos:
-    * Asignarle la IP del servicio MySQL (172.30.75.11 por ej.)
-    * Utilizar la variable de entorno del contenedor MYSQL_SERVICE_SERVICE_HOST
-"""
 
-# MYSQL_HOST = "################### --> SET-ME <-- ##############################"
-# MYSQL_PORT = 3306
-
-MYSQL_HOST=os.environ.get("MYSQL_SERVICE_SERVICE_HOST")
-MYSQL_PORT = int(os.environ.get("MYSQL_SERVICE_SERVICE_PORT"))
-MYSQL_DATABASE = "transactions"
-MYSQL_USER = "innocloud"
-MYSQL_PASS = "1234"

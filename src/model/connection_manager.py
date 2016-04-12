@@ -1,5 +1,3 @@
-import pymysql
-
 from src.constants import *
 from src.controller.singleton import Singleton
 from playhouse.db_url import connect
@@ -20,7 +18,7 @@ class ConnectionManager(Singleton):
             self._db = connect('mysql://%s:%s@%s:%d/%s'%(
                 MYSQL_USER,
                 MYSQL_PASS,
-                MYSQL_HOST,
-                MYSQL_PORT,
+                os.environ[MYSQL_HOST_ENV],
+                int(os.environ[MYSQL_PORT_ENV]),
                 MYSQL_DATABASE
             ))
