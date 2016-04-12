@@ -1,9 +1,14 @@
 # -*- encoding: utf-8 -*-
 import copy
 import json
-import logging
 import unittest
+import sys
 from mock import patch, Mock
+from constants import *
+#TODO This is necessary for dev, but it should be changed to a more formal way.
+if sys.platform=="win32":
+    os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
+    os.environ[MYSQL_PORT_ENV]=DEV_MYSQL_PORT
 from src.controller.endpoint_handlers.transaction_endpoint_handler import \
     TransactionEndpointHandler
 from src.controller.exceptions import MalformedTransactionException
@@ -35,7 +40,10 @@ class TestProcessingEndpointHandler(unittest.TestCase):
             "commerce_country" : "ES",
             "commerce_country_name" : "Spain",
             "commerce_account_iban" : "ES7231011409805348991287",
-            "transaction_datetime" : "2015-06-15T18:01:32.000+0000"
+            "transaction_datetime" : "2015-06-15T18:01:32.000+0000",
+            "client_name":"foo",
+            "client_last_name": "bar",
+            "fraud_code":1
         }
 
         self.transaction_dto = \
@@ -47,7 +55,7 @@ class TestProcessingEndpointHandler(unittest.TestCase):
     def test_malformed_transaction_return_exception_message(self):
         with patch('bottle.request', self.get_read_mock()):
             expected = MalformedTransactionException().message
-            result = self.processing.handle_transaction_post()
+            result = self.processing.handle_transaction_post_request()
             self.assertEquals(result, expected)
 
     def get_read_mock(self):
