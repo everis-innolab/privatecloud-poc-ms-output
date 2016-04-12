@@ -30,7 +30,7 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         try:
             self._logger.info("Processing Transaction Request")
             transaction = self.__get_transaction_from_body()
-            self._logger.info("Saving Transaction exception")
+            self._logger.info("Saving Transaction")
             TransactionDAO().save_transaction(transaction)
             self.__send_transaction_to_all_websockets(transaction)
             self._logger.info("Handled Transaction Request")
@@ -88,11 +88,11 @@ class TransactionEndpointHandler(BaseEndpointHandler):
 
     def __read_filter_query_params(self):
         try:
-            pagination = bottle.request.query.pagination or False
-            count = int(bottle.request.query.count) or 5
+            pagination = bottle.request.query.pagination or True
+            count = int(bottle.request.query.count or '5')
             sort_by = bottle.request.query.sortBy or "id"
             sort_order = bottle.request.query.sortOrder or "asc"
-            page = int(bottle.request.query.page) or 1
+            page = int(bottle.request.query.page or '1')
 
             string = "Read params pagination: %s, count: %s, sort_by: %s, " \
                      "sort_order: %s, page: %s"

@@ -109,7 +109,7 @@ class TransactionDAO(Singleton):
         meta_dict = {}
         meta_dict["size"]=Transaction.select().count()
         meta_dict["page"]=current_page
-        meta_dict["count"]=items_per_page
+        meta_dict["count"]=min (items_per_page,Transaction.select().count())
         meta_dict["pages"] = \
             self.__get_page_count(meta_dict["size"], items_per_page)
         return meta_dict
