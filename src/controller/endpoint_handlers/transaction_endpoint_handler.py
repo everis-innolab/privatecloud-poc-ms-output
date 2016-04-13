@@ -32,6 +32,7 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             transaction = self.__get_transaction_from_body()
             self._logger.info("Saving Transaction")
             TransactionDAO().save_transaction(transaction)
+            self._logger.info("Fraud Code: %s"%(transaction.fraud_code))
             if transaction.fraud_code is not 0:
                 self.__send_transaction_to_all_websockets(transaction)
 
