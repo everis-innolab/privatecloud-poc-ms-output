@@ -67,7 +67,10 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         try:
             doc = TransactionDAO().to_dict(transaction_dto)
             websocket.send(json.dumps(doc))
+            self._logger.info("Transaction sent")
         except Exception, e:
+            self.logger.exception("Exception sending transaction, Websocket "
+                                  "might have been closed by the other part.")
             self.active_websockets.remove(websocket)
 
     def handle_filter_get_request(self):
