@@ -52,8 +52,14 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         return TransactionDAO().build_from_document(doc)
 
     def __send_transaction_to_all_websockets(self, transaction_dto):
+        self._logger.info(
+            "Trying to send transaction to %s websockets"%
+            str(len(self.active_websockets))
+        )
+
         if len(self.active_websockets)>0:
             for wsock in self.active_websockets:
+                self._logger.info("Sending Transaction to websocket")
                 self.__send_transaction_to_websocket(wsock, transaction_dto)
             self.transaction_buffer = []
 
