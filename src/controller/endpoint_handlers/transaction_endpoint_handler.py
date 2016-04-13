@@ -32,7 +32,9 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             transaction = self.__get_transaction_from_body()
             self._logger.info("Saving Transaction")
             TransactionDAO().save_transaction(transaction)
-            self.__send_transaction_to_all_websockets(transaction)
+            if transaction.fraud_code is not 0:
+                self.__send_transaction_to_all_websockets(transaction)
+
             self._logger.info("Handled Transaction Request")
             return self.return_response("OK", 201)
 
@@ -103,10 +105,3 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         except Exception, e:
             self._logger.exception("Error parsing filter query params")
             raise e
-
-
-
-
-
-
-

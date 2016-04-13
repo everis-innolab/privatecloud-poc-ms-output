@@ -6,7 +6,6 @@ from constants import *
 if sys.platform=="win32":
     os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
     os.environ[MYSQL_PORT_ENV]=DEV_MYSQL_PORT
-
 from src.controller.eureka_properties_factory import EurekaPropertiesFactory
 from controller.logs.logger_factory import LoggerFactory
 from eurekalab.client import EurekaClient
@@ -28,16 +27,18 @@ class Main():
 
     def launch_server(self):
         try:
-            my_handler = \
+            handler = \
                 TransactionEndpointHandler(self.__eureka_agent, self.__logger)
+
+
             wiring = [
-                (TRANSACTION_ENDPOINT, "POST", my_handler.handle_transaction_post_request),
-                (WEBSOCKET_ENDPOINT, "GET", my_handler.handle_websocket_request),
-                (FILTER_ENDPOINT, "GET", my_handler.handle_filter_get_request)
+                (TRANSACTION_ENDPOINT, "POST", handler.handle_transaction_post_request),
+                (WEBSOCKET_ENDPOINT, "GET", handler.handle_websocket_request),
+                (FILTER_ENDPOINT, "GET", handler.handle_filter_get_request())
             ]
 
             runner = ServiceRunner(
-                my_handler, wiring, self.__eureka_agent, web_socket=True
+                handler, wiring, self.__eureka_agent, web_socket=True
             )
 
             runner.start()
