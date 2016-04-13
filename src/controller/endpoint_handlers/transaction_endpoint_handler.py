@@ -82,7 +82,8 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             )
             self._logger.info("Handled Filter Request")
             bottle.response.content_type = 'application/json'
-            bottle.response.headers["Access-Control-Allow-Origin"] = "*.cloud.everis.com"
+            # bottle.response.headers["Access-Control-Allow-Origin"] = "*.cloud.everis.com"
+            bottle.response.headers["Access-Control-Allow-Origin"] = "*"
             bottle.response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
             bottle.response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
