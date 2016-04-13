@@ -38,6 +38,7 @@ class TransactionDAO(Singleton):
         dict["transaction_datetime"] = Transaction.transaction_datetime
         dict["client_name"]=Transaction.client_name
         dict["client_last_name"]=Transaction.client_last_name
+        dict["fraud_code"]=Transaction.fraud_code
         return dict
 
     def build_from_document(self, source_doc):
