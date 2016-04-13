@@ -34,7 +34,7 @@ class Main():
             wiring = [
                 (TRANSACTION_ENDPOINT, "POST", handler.handle_transaction_post_request),
                 (WEBSOCKET_ENDPOINT, "GET", handler.handle_websocket_request),
-                (FILTER_ENDPOINT, "GET", handler.handle_filter_get_request())
+                (FILTER_ENDPOINT, "GET", handler.handle_filter_get_request)
             ]
 
             runner = ServiceRunner(
@@ -46,8 +46,12 @@ class Main():
             self.__logger.exception("Exception Launching Server")
             raise e
         finally:
-            self.__eureka_agent.de_register_in_eureka()
             self.__logger.info("De-register in eureka")
+            try:
+                self.__eureka_agent.de_register_in_eureka()
+            except Exception:
+                self.__logger.exception("Could not De-Register in eureka.")
+
 
 if __name__ == "__main__":
     # Lanzar con WorkingDirectory en ..../privatecloud-poc/ms-output

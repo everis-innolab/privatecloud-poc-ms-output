@@ -82,6 +82,10 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             )
             self._logger.info("Handled Filter Request")
             bottle.response.content_type = 'application/json'
+            bottle.response.headers["Access-Control-Allow-Origin"] = "*.cloud.everis.com"
+            bottle.response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+            bottle.response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+
             return self.return_response(json.dumps(response), 200)
         except Exception, e:
             self._logger.exception("Exception handling filter request returning 500")
