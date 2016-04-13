@@ -2,7 +2,7 @@
 <html>
 <head>
   <script type="text/javascript">
-    var ws = new WebSocket("ws://localhost:9992/websocket");
+    var ws = new WebSocket("ws://ms-output-fd.cloud.everis.com/websocket");
     ws.onopen = function() {
         ws.send("Socket Opened");
     };
