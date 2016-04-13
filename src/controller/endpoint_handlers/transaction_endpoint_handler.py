@@ -69,7 +69,7 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             websocket.send(json.dumps(doc))
             self._logger.info("Transaction sent")
         except Exception, e:
-            self.logger.exception("Exception sending transaction, Websocket "
+            self._logger.exception("Exception sending transaction, Websocket "
                                   "might have been closed by the other part.")
             self.active_websockets.remove(websocket)
 
