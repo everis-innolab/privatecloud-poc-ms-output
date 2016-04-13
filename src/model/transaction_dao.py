@@ -24,7 +24,7 @@ class TransactionDAO(Singleton):
 
     def to_dict(self, Transaction):
         dict= {}
-        dict["_id"] = Transaction._id
+        dict["_id"] = Transaction.id
         dict["client_country"] = Transaction.client_country
         dict["client_id"] = Transaction.client_id
         dict["commerce_tpv"] = Transaction.commerce_tpv

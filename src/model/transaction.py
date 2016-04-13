@@ -32,7 +32,7 @@ class Transaction(BaseModel):
 
     def __eq__(self, other):
         return (
-            self._id == other._id and
+            self.id == other.id and
             self.client_country == other.client_country and
             self.client_id == other.client_id and
             self.commerce_tpv == other.commerce_tpv and
