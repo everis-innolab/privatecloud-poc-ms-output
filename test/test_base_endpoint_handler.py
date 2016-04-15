@@ -1,18 +1,7 @@
 # -*- encoding: utf-8 -*-
 import logging
-import sys
 import unittest
-import os
-from os.path import dirname
-
-# parent = dirname(dirname(os.path.abspath(__file__)))
-# src_dir = os.path.join(parent, "/","src")
-# print src_dir
-# sys.path.insert(0,os.getcwd())
-
-
 from mock import patch, Mock, mock_open, MagicMock
-from src import constants
 from src.controller.endpoint_handlers.base_endpoint_handler import \
     BaseEndpointHandler
 from src.controller.logs.logger_factory import LoggerFactory

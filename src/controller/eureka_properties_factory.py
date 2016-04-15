@@ -23,7 +23,7 @@ class EurekaPropertiesFactory(Singleton):
         )
 
     def __read_eureka_host_and_port_from_env(self):
-        # TO-DO. Para futuras versiones esto leera las variables globales
+        # TODO. Para futuras versiones esto leera las variables globales
         # para el primer despliegue usamos los valores "Hardcodeados"
 
         # host = os.environ.get(EUREKA_HOST_ENV)
