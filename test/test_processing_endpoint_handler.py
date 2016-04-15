@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 import copy
 import json
+import os
 import unittest
 import sys
 from mock import patch, Mock
-from constants import *
+from src.constants import *
 #TODO This is necessary for dev, but it should be changed to a more formal way.
 if sys.platform=="win32":
     os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
@@ -21,7 +22,7 @@ class TestProcessingEndpointHandler(unittest.TestCase):
     def setUp(self ):
         logger = LoggerFactory.get_logger(
             # This path is set to be used with nosetests, so do not change.
-            # Rather change the Pycharm launcher instead if needed and set it
+            # Rather change the Pycharm launcher instead if needed, and set it
             # to xxx\ms-cloud\python\OutputHandlerNode
             "./src/controller/logs/processing_node.log", logging.INFO
         )
