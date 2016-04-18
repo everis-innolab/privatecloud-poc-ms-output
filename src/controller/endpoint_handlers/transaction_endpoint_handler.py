@@ -80,7 +80,7 @@ class TransactionEndpointHandler(BaseEndpointHandler):
 
         try:
             self._logger.info("Processing Filter Request")
-            pagination, count, sort_by, sort_order, page = \
+            pagination, count, sort_by, sort_order, page, query = \
                 self.__read_filter_query_params()
 
             response = TransactionDAO().get_query_as_json(
@@ -88,7 +88,8 @@ class TransactionEndpointHandler(BaseEndpointHandler):
                 count=count,
                 sort_by=sort_by,
                 sort_order=sort_order,
-                page=page
+                page=page,
+                query=query
             )
             self._logger.info("Handled Filter Request")
             bottle.response.content_type = 'application/json'
@@ -110,12 +111,15 @@ class TransactionEndpointHandler(BaseEndpointHandler):
             sort_by = bottle.request.query.sortBy or "id"
             sort_order = bottle.request.query.sortOrder or "asc"
             page = int(bottle.request.query.page or '1')
+            query = bottle.request.query.query or ""
 
             string = "Read params pagination: %s, count: %s, sort_by: %s, " \
-                     "sort_order: %s, page: %s"
-            formatted_str = string%(pagination, count, sort_by, sort_order, page)
+                     "sort_order: %s, page: %s, query: %s"
+            formatted_str = \
+                string%(pagination, count, sort_by, sort_order, page, query)
+
             self._logger.info(formatted_str)
-            return pagination, count, sort_by, sort_order, page
+            return pagination, count, sort_by, sort_order, page, query
 
         except Exception, e:
             self._logger.exception("Error parsing filter query params")
