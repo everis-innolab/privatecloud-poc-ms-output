@@ -7,7 +7,6 @@ class BaseModel(Model):
         database = ConnectionManager().get_database()
         auto_increment = False
 
-
 class Transaction(BaseModel):
     # Carefull!! f you always want to have control over the primary key,
     # simply do not use the PrimaryKeyField field type, but use a normal

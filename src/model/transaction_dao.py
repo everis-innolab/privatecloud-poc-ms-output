@@ -1,7 +1,7 @@
 import json
 import pprint
 from peewee import Model, CharField, PrimaryKeyField, IntegerField, FloatField, \
-    MySQLDatabase, IntegrityError, Node
+    MySQLDatabase, IntegrityError, Node, OperationalError
 from src.controller.exceptions import MalformedTransactionException
 from src.controller.singleton import Singleton
 from src.model.connection_manager import ConnectionManager
