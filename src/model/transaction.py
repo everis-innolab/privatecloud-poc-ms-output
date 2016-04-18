@@ -28,7 +28,6 @@ class Transaction(BaseModel):
     client_name = CharField()
     client_last_name = CharField()
 
-
     def __eq__(self, other):
         return (
             self.id == other.id and
