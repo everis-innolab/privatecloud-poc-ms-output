@@ -1,7 +1,7 @@
 from src.constants import *
 from src.controller.singleton import Singleton
 from playhouse.db_url import connect
-
+from playhouse.pool import PooledMySQLDatabase
 
 class ConnectionManager(Singleton):
 
@@ -14,11 +14,22 @@ class ConnectionManager(Singleton):
         return self._db
 
     def __initialize_db_object_if_necessary(self):
-        if self._db is None:
-            self._db = connect('mysql://%s:%s@%s:%d/%s'%(
-                MYSQL_USER,
-                MYSQL_PASS,
-                os.environ[MYSQL_HOST_ENV],
-                int(os.environ[MYSQL_PORT_ENV]),
-                MYSQL_DATABASE
-            ))
+        """
+        This automatically manages a pool of connections.
+
+        http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#pool
+        """
+        self._db = PooledMySQLDatabase(
+            database=MYSQL_DATABASE,
+            max_connections=4,
+            stale_timeout=300,
+            **{
+                'host': os.environ[MYSQL_HOST_ENV],
+                'port': int(os.environ[MYSQL_PORT_ENV]),
+                'user': MYSQL_USER,
+                'password':MYSQL_PASS
+            }
+        )
+
+
+
