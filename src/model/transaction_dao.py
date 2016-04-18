@@ -21,6 +21,8 @@ class TransactionDAO(Singleton):
             transaction.save(force_insert=True)
         except IntegrityError, e:
             transaction.save()
+        finally:
+            ConnectionManager().close_connection()
 
     def to_dict(self, Transaction):
         dict= {}
@@ -159,6 +161,8 @@ class TransactionDAO(Singleton):
 
         for transaction in iterable:
             rows.append(self.__project_transaction_into_dict(transaction, keys))
+
+        ConnectionManager().close_connection()
 
         return rows
 

@@ -21,8 +21,10 @@ class EurekaAgent():
         self.__start_heartbeat_thread()
 
     def de_register_in_eureka(self):
+        self.__logger.info("Trying to de-register in eureka")
         self.ec_client.de_register()
         self.__stop_heartbeat_thread()
+        self.__logger.info("De-register complete")
 
     def __start_heartbeat_thread(self):
         self.heart_beat_stop_flag = Event()
@@ -33,7 +35,10 @@ class EurekaAgent():
         self.heart_beat_thread.start()
 
     def __stop_heartbeat_thread(self):
-        self.heart_beat_stop_flag.set()
+        if self.heart_beat_stop_flag.set() is not None:
+            self.heart_beat_stop_flag.set()
+        else:
+            self.__logger.info("heart_beat_stop_flag was None, avoiding set")
 
 class MyThread(Thread):
 

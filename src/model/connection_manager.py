@@ -13,6 +13,10 @@ class ConnectionManager(Singleton):
         self.__initialize_db_object_if_necessary()
         return self._db
 
+    def close_connection(self):
+        if self._db is not None:
+            self._db.manual_close()
+
     def __initialize_db_object_if_necessary(self):
         """
         This automatically manages a pool of connections.
