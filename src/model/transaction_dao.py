@@ -85,7 +85,7 @@ class TransactionDAO(Singleton):
 # JSON RESPONSE DATA GENERATION
 #===============================================================================
     def get_query_as_json(self, pagination=True, count=10, sort_by="id",
-                          sort_order="dsc", page=1):
+                          sort_order="dsc", page=1, query=""):
         """
         The current method returns a query in a specific format that the
         front-end shows. The format specification can be seen at this link:
@@ -97,20 +97,27 @@ class TransactionDAO(Singleton):
         """
         data_dict = {}
 
-        data_dict["pagination"] = self.__get_pagination_metadata(count, page)
+        data_dict["pagination"] = self.__get_pagination_metadata(count, page, query)
         data_dict["header"]=self.__get_header()
         data_dict["rows"]=self.__get_data_rows(
-            pagination, count, sort_by, sort_order, page
+            pagination, count, sort_by, sort_order, page, query
         )
         data_dict["sort-by"] = sort_by
         data_dict["sort-order"] = sort_order
         return data_dict
 
-    def __get_pagination_metadata(self, items_per_page, current_page):
+    def __get_pagination_metadata(self, items_per_page, current_page, query):
         meta_dict = {}
-        meta_dict["size"]=Transaction.select().count()
+        count = Transaction.select().where(
+            (Transaction.client_name.contains(query)) |
+            (Transaction.client_last_name.contains(query)) |
+            (Transaction.client_country_name.contains(query)) |
+            (Transaction.client_credit_card.contains(query))
+        ).count()
+
+        meta_dict["size"]=count
         meta_dict["page"]=current_page
-        meta_dict["count"]=min (items_per_page,Transaction.select().count())
+        meta_dict["count"]=min (items_per_page, count)
         meta_dict["pages"] = \
             self.__get_page_count(meta_dict["size"], items_per_page)
         return meta_dict
@@ -126,12 +133,13 @@ class TransactionDAO(Singleton):
         keys = [
             "commerce_tpv","client_credit_card","transaction_amount",
             "client_country_name","commerce_country_name",
-            "commerce_account_iban","transaction_datetime","fraud_code"
+            "commerce_account_iban","transaction_datetime","fraud_code",
+            "client_name", "client_last_name"
         ]
         names = [
             "Commerce Tpv","Client Credit Card","Amount","Client Country",
             "Commerce Country","Commerce Account","Transaction Date",
-            "Fraud Code"
+            "Fraud Code", "Client Name", "Client Last Name"
         ]
         return keys, names
 
@@ -142,11 +150,11 @@ class TransactionDAO(Singleton):
         return page_count
 
     def __get_data_rows(self, pagination, count, sort_by, sort_order, page,
-                        where=None):
+                        query=""):
         rows = []
         keys = self.__get_keys_and_names_for_projection()[0]
         iterable = self.__get_query_as_transaction_list(
-            pagination, count, sort_by, sort_order, page
+            pagination, count, sort_by, sort_order, page, query
         )
 
         for transaction in iterable:
@@ -155,7 +163,7 @@ class TransactionDAO(Singleton):
         return rows
 
     def __get_query_as_transaction_list(self, pagination, count, sort_by,
-                                        sort_order, page, where=None):
+                                        sort_order, page, query=""):
         order_atribute = getattr(Transaction, sort_by)
         if sort_order == "desc":
             order_method = order_atribute.desc()
@@ -168,7 +176,12 @@ class TransactionDAO(Singleton):
             skip = count * (page-1)
             limit = count
 
-        iterable = Transaction.select().order_by(order_method)\
+        iterable = Transaction.select().where(
+            (Transaction.client_name.contains(query)) |
+            (Transaction.client_last_name.contains(query)) |
+            (Transaction.client_country_name.contains(query)) |
+            (Transaction.client_credit_card.contains(query))
+        ).order_by(order_method)\
             .offset(skip).limit(limit)
 
         return iterable
