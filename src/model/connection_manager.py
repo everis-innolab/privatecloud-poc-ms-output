@@ -10,14 +10,14 @@ class ConnectionManager(Singleton):
         self._db = None
 
     def get_database(self):
-        self.__initialize_db_object_if_necessary()
+        self.reconnect()
         return self._db
 
     def close_connection(self):
         if self._db is not None:
             self._db.manual_close()
 
-    def __initialize_db_object_if_necessary(self):
+    def reconnect(self):
         """
         This automatically manages a pool of connections.
 
