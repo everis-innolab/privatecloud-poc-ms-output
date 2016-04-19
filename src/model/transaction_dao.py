@@ -17,12 +17,28 @@ class TransactionDAO(Singleton):
         # Caution!! By default save does an update if primary key is specified, and an
         # insert if no PK was specified. To overcome this we can use insert or, maybe
         # better use the force_insert parameter of the save method.
+
+        self.__reset_conn_if_operational_error()
         try:
             transaction.save(force_insert=True)
         except IntegrityError, e:
             transaction.save()
         finally:
             ConnectionManager().close_connection()
+
+    def __reset_conn_if_operational_error(self, transaction_object=None):
+        """
+        Probably this is kind of an overkill, buy just to be sure until we
+        have determined if relocation of mysql pods conflicts with the
+        connection pool
+        """
+        try:
+            count = Transaction.select().count()
+        except OperationalError, e:
+            ConnectionManager().reconnect()
+
+            if transaction_object is not None:
+                transaction_object.database = ConnectionManager().get_database()
 
     def to_dict(self, Transaction):
         dict= {}
@@ -109,6 +125,7 @@ class TransactionDAO(Singleton):
         return data_dict
 
     def __get_pagination_metadata(self, items_per_page, current_page, query):
+        self.__reset_conn_if_operational_error()
         meta_dict = {}
         count = Transaction.select().where(
             (Transaction.client_name.contains(query)) |
@@ -168,6 +185,7 @@ class TransactionDAO(Singleton):
 
     def __get_query_as_transaction_list(self, pagination, count, sort_by,
                                         sort_order, page, query=""):
+        self.__reset_conn_if_operational_error()
         order_atribute = getattr(Transaction, sort_by)
         if sort_order == "desc":
             order_method = order_atribute.desc()
@@ -179,14 +197,21 @@ class TransactionDAO(Singleton):
         else:
             skip = count * (page-1)
             limit = count
-
-        iterable = Transaction.select().where(
-            (Transaction.client_name.contains(query)) |
-            (Transaction.client_last_name.contains(query)) |
-            (Transaction.client_country_name.contains(query)) |
-            (Transaction.client_credit_card.contains(query))
-        ).order_by(order_method)\
-            .offset(skip).limit(limit)
+        try:
+            iterable = Transaction.select().where(
+                (Transaction.client_name.contains(query)) |
+                (Transaction.client_last_name.contains(query)) |
+                (Transaction.client_country_name.contains(query)) |
+                (Transaction.client_credit_card.contains(query))
+            ).order_by(order_method).offset(skip).limit(limit)
+        except OperationalError, e:
+            ConnectionManager().reconnect()
+            iterable = Transaction.select().where(
+                (Transaction.client_name.contains(query)) |
+                (Transaction.client_last_name.contains(query)) |
+                (Transaction.client_country_name.contains(query)) |
+                (Transaction.client_credit_card.contains(query))
+            ).order_by(order_method).offset(skip).limit(limit)
 
         return iterable
 
