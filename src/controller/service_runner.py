@@ -2,6 +2,7 @@ import bottle
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 from src.constants import *
+from src.model.connection_manager import ConnectionManager
 
 
 class ServiceRunner():
@@ -21,6 +22,9 @@ class ServiceRunner():
         self.__web_socket = web_socket
         self.__wire_standard_routes()
         self.__wire_routes_to_methods(route_wiring_list)
+        self.__add_hooks()
+
+
 
 
     def __wire_standard_routes(self):
@@ -36,6 +40,20 @@ class ServiceRunner():
         if route_wiring_list is not None and len(route_wiring_list)>0:
             for endpoint, method, callback in route_wiring_list:
                 self._app.route(endpoint, method, callback)
+        pass
+
+#===============================================================================
+# BEFORE AND AFTER REQUEST HOOKS
+#===============================================================================
+    def __connect(self):
+        ConnectionManager().connect()
+
+    def __disconnect(self):
+        ConnectionManager().close()
+
+    def __add_hooks(self):
+        self._app.add_hook('before_request',self.__connect )
+        self._app.add_hook('after_request',self.__disconnect )
 
     def start(self):
         self.eureka_agent.register_in_eureka()

@@ -15,7 +15,7 @@ FILTER_ENDPOINT="/filter"
 LOG_FILE = "./src/controller/logs/processing_node.log"
 DEFAULT_LOGGIN_LEVEL = logging.INFO
 EUREKA_APP_NAME = "OutputHandler"
-EUREKA_HEARTBEAT_INTERVAL = 25
+EUREKA_HEARTBEAT_INTERVAL = 15
 
 #Kubernetes Enviroment Variables
 EUREKA_HOST_ENV = "EUREKA_SERVICE_SERVICE_HOST"

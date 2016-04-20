@@ -35,7 +35,7 @@ class EurekaAgent():
         self.heart_beat_thread.start()
 
     def __stop_heartbeat_thread(self):
-        if self.heart_beat_stop_flag.set() is not None:
+        if self.heart_beat_stop_flag is not None:
             self.heart_beat_stop_flag.set()
         else:
             self.__logger.info("heart_beat_stop_flag was None, avoiding set")

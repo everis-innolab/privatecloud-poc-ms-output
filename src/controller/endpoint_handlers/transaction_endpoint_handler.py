@@ -1,6 +1,7 @@
 # -*- encoding: utf8 -*-
 import json
 import bottle
+from bottle import app
 from gevent import monkey, sleep
 from src.controller.endpoint_handlers.base_endpoint_handler import \
     BaseEndpointHandler
@@ -29,7 +30,6 @@ class TransactionEndpointHandler(BaseEndpointHandler):
 
     def handle_transaction_post_request(self):
         try:
-            ConnectionManager().reconnect()
             self._logger.info("Processing Transaction Request")
             transaction = self.__get_transaction_from_body()
             self._logger.info("Saving Transaction")
@@ -47,9 +47,6 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         except Exception, e:
             self._logger.exception("Error handling transaction. returning 500")
             return self.return_response(e.message, 500)
-
-        finally:
-            ConnectionManager().close_connection()
 
     def __get_transaction_from_body(self):
         body_str = bottle.request.body.read()
@@ -84,7 +81,6 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         # "sortOrder":"dsc","page":1}
 
         try:
-            ConnectionManager().reconnect()
             self._logger.info("Processing Filter Request")
             pagination, count, sort_by, sort_order, page, query = \
                 self.__read_filter_query_params()
@@ -108,8 +104,6 @@ class TransactionEndpointHandler(BaseEndpointHandler):
         except Exception, e:
             self._logger.exception("Exception handling filter request returning 500")
             return self.return_response(e.message, 500)
-        finally:
-            ConnectionManager().close_connection()
 
 
     def __read_filter_query_params(self):
