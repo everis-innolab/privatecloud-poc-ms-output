@@ -4,11 +4,13 @@ import bottle
 from src.controller.logs.utils import Utils
 from src.controller.templates.status_page_template import STATUS_PAGE_TEMPLATE
 
+
 class BaseEndpointHandler(object):
     """
     It's responsability is to provide the handlers necessary to answer the
     base endpoints (status, health, homepage and logs).
     """
+
     def __init__(self, eureka_agent, logger):
         # self._logger = LoggerFactory.get_logger()
         self._logger = logger

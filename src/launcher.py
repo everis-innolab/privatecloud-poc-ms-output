@@ -53,6 +53,7 @@ class Main():
                 self.__logger.exception("Could not De-Register in eureka.")
 
 
+
 if __name__ == "__main__":
     # Lanzar con WorkingDirectory en ..../privatecloud-poc/ms-output
 
@@ -69,9 +70,7 @@ if __name__ == "__main__":
         my_app_dto = factory.get_app_instance_dto()
         logger.info("Launching OutputHandler service")
 
+
     Transaction.create_table(fail_silently=True)
     main_launcher = Main(logger, eureka_dto, my_app_dto)
     main_launcher.launch_server()
-
-
-

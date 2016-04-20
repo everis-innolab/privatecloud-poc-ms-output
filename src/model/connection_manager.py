@@ -8,14 +8,16 @@ class ConnectionManager(Singleton):
     def __init__(self):
         super(ConnectionManager, self).__init__()
         self._db = None
+        self.reconnect()
 
     def get_database(self):
-        self.reconnect()
         return self._db
 
-    def close_connection(self):
-        if self._db is not None:
-            self._db.manual_close()
+    def connect(self):
+        self._db.connect()
+
+    def close(self):
+         self._db.close()
 
     def reconnect(self):
         """
