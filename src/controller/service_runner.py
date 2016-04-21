@@ -46,9 +46,11 @@ class ServiceRunner():
 # BEFORE AND AFTER REQUEST HOOKS
 #===============================================================================
     def __connect(self):
-        ConnectionManager().connect()
+        self.__handler._logger.info("Executing connect before request")
+        ConnectionManager().reconnect()
 
     def __disconnect(self):
+        self.__handler._logger.info("Executing close after request")
         ConnectionManager().close()
 
     def __add_hooks(self):
