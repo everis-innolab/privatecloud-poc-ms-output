@@ -1,11 +1,10 @@
-import sys
 import os
+import sys
+from src.controller.constants.constants_factory import ConstantsFactory
+from src.model.connection_manager import ConnectionManager
+from src.model.transaction import ProxyFactory
+
 sys.path.append(os.getcwd())
-from constants import *
-#TODO This is necessary for dev, but it should be changed to a more formal way.
-if sys.platform=="win32":
-    os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
-    os.environ[MYSQL_PORT_ENV]=DEV_MYSQL_PORT
 from src.controller.eureka_properties_factory import EurekaPropertiesFactory
 from controller.logs.logger_factory import LoggerFactory
 from eurekalab.client import EurekaClient
@@ -18,27 +17,40 @@ from model.transaction_dao import Transaction
 
 class Main():
 
-    def __init__(self, logger,eureka_server_dto, my_app_instace_dto):
+    def __init__(self, logger,eureka_server_dto, my_app_instace_dto, constants_dto):
         eureka_client = EurekaClient(eureka_server_dto, my_app_instace_dto)
-        self.__eureka_agent = EurekaAgent(eureka_client, logger)
+        self.__eureka_agent = EurekaAgent(
+            eureka_client, logger, constants_dto.eureka_heartbeat_interval
+        )
+
         self.__my_app_instance_dto = my_app_instace_dto
         self.__logger = logger
-
+        self.__constants=constants_dto
 
     def launch_server(self):
         try:
             handler = \
                 TransactionEndpointHandler(self.__eureka_agent, self.__logger)
 
-
             wiring = [
-                (TRANSACTION_ENDPOINT, "POST", handler.handle_transaction_post_request),
-                (WEBSOCKET_ENDPOINT, "GET", handler.handle_websocket_request),
-                (FILTER_ENDPOINT, "GET", handler.handle_filter_get_request)
+                (
+                    self.__constants.transaction_endpoint,
+                    "POST",
+                    handler.handle_transaction_post_request
+                ),(
+                    self.__constants.webscket_endpoint,
+                    "GET",
+                    handler.handle_websocket_request
+                ),(
+                    self.__constants.filter_endpoint,
+                    "GET",
+                    handler.handle_filter_get_request
+                )
             ]
 
             runner = ServiceRunner(
-                handler, wiring, self.__eureka_agent, web_socket=True
+                handler, wiring, self.__eureka_agent, web_socket=True,
+                constants_dto=self.__constants
             )
 
             runner.start()
@@ -53,24 +65,30 @@ class Main():
                 self.__logger.exception("Could not De-Register in eureka.")
 
 
-
 if __name__ == "__main__":
+
     # Lanzar con WorkingDirectory en ..../privatecloud-poc/ms-output
-
-    logger = LoggerFactory.get_logger(LOG_FILE, DEFAULT_LOGGIN_LEVEL)
-
-    factory = EurekaPropertiesFactory()
     if "--develop" in sys.argv or "--development" in sys.argv:
-        eureka_dto = factory.get_development_eureka_server_dto()
-        my_app_dto = factory.get_development_app_instance_dto()
+        constants_dto = ConstantsFactory.get_constants_dto("development")
+        logger = LoggerFactory.get_logger(
+            constants_dto.log_file, constants_dto.default_loggin_level
+        )
         logger.info("Launching OutputHandler service in development mode")
-
     else:
-        eureka_dto = factory.get_eureka_server_dto()
-        my_app_dto = factory.get_app_instance_dto()
+        constants_dto = ConstantsFactory.get_constants_dto("production")
+        logger = LoggerFactory.get_logger(
+            constants_dto.log_file, constants_dto.default_loggin_level
+        )
         logger.info("Launching OutputHandler service")
 
-
+    ConnectionManager().set_constants_dto(constants_dto)
+    ProxyFactory.database_proxy.initialize(ConnectionManager().get_database())
     Transaction.create_table(fail_silently=True)
-    main_launcher = Main(logger, eureka_dto, my_app_dto)
+    eureka_factory = EurekaPropertiesFactory(constants_dto)
+    main_launcher = Main(
+        logger,
+        eureka_factory.get_eureka_server_dto(),
+        eureka_factory.get_app_instance_dto(),
+        constants_dto
+    )
     main_launcher.launch_server()

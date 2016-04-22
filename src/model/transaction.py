@@ -1,11 +1,17 @@
-from peewee import Model, IntegerField, CharField, FloatField
+from peewee import Model, IntegerField, CharField, FloatField, Proxy
 from src.model.connection_manager import ConnectionManager
 
+class ProxyFactory():
+
+    database_proxy = Proxy()
 
 class BaseModel(Model):
     class Meta:
-        database = ConnectionManager().get_database()
-        auto_increment = False
+        # database = ConnectionManager().get_database()
+        # auto_increment = False
+
+        # Proxy Database to define the connection later
+        database = ProxyFactory.database_proxy
 
 class Transaction(BaseModel):
     # Carefull!! f you always want to have control over the primary key,

@@ -1,8 +1,6 @@
-from bottle import hook
-from peewee import IntegrityError, OperationalError
+from peewee import IntegrityError
 from src.controller.exceptions import MalformedTransactionException
 from src.controller.singleton import Singleton
-from src.model.connection_manager import ConnectionManager
 from src.model.transaction import Transaction
 
 
@@ -11,13 +9,10 @@ class TransactionDAO(Singleton):
     def __init__(self):
         super(TransactionDAO, self).__init__()
 
-
-
     def save_transaction(self, transaction):
         # Caution!! By default save does an update if primary key is specified, and an
         # insert if no PK was specified. To overcome this we can use insert or, maybe
         # better use the force_insert parameter of the save method.
-
         try:
             transaction.save(force_insert=True)
         except IntegrityError, e:
