@@ -1,15 +1,9 @@
 # -*- encoding: utf-8 -*-
 import copy
 import json
-import os
+import logging
 import unittest
-import sys
 from mock import patch, Mock
-from src.constants import *
-#TODO This is necessary for dev, but it should be changed to a more formal way.
-if sys.platform=="win32":
-    os.environ[MYSQL_HOST_ENV]=DEV_MYSQL_HOST
-    os.environ[MYSQL_PORT_ENV]=DEV_MYSQL_PORT
 from src.controller.endpoint_handlers.transaction_endpoint_handler import \
     TransactionEndpointHandler
 from src.controller.exceptions import MalformedTransactionException

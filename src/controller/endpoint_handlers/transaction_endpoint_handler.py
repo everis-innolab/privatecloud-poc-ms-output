@@ -6,7 +6,6 @@ from gevent import monkey, sleep
 from src.controller.endpoint_handlers.base_endpoint_handler import \
     BaseEndpointHandler
 from src.controller.exceptions import MalformedTransactionException
-from src.model.connection_manager import ConnectionManager
 from src.model.transaction_dao import TransactionDAO
 monkey.patch_all()
 

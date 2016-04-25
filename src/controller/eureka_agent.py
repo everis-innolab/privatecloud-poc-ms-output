@@ -1,17 +1,15 @@
 # -*- encoding: utf8 -*-
-import random
 from threading import Thread, Event
 import time
-from src.constants import EUREKA_HEARTBEAT_INTERVAL
-
 
 class EurekaAgent():
 
-    def __init__(self, ec_client, logger):
+    def __init__(self, ec_client, logger, heart_beat_interval):
         self.ec_client = ec_client
         self.heart_beat_thread = None
         self.heart_beat_stop_flag = None
         self.__logger = logger
+        self.heart_beat_interval = heart_beat_interval
 
     def register_in_eureka(self):
         self.ec_client.register()
@@ -29,7 +27,7 @@ class EurekaAgent():
     def __start_heartbeat_thread(self):
         self.heart_beat_stop_flag = Event()
         self.heart_beat_thread =  MyThread(
-            self.heart_beat_stop_flag, EUREKA_HEARTBEAT_INTERVAL,
+            self.heart_beat_stop_flag, self.heart_beat_interval,
             self.ec_client.heartbeat, self.__logger
         )
         self.heart_beat_thread.start()

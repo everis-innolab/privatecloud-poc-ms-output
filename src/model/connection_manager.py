@@ -1,22 +1,22 @@
 from peewee import MySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
-
-from src.constants import *
 from src.controller.singleton import Singleton
-from playhouse.db_url import connect
-from playhouse.pool import PooledMySQLDatabase
-
-
 
 
 class ConnectionManager(Singleton):
 
+    _constants_dto=None
+
     def __init__(self):
         super(ConnectionManager, self).__init__()
         self._db = None
-        self.reconnect()
+
+    def set_constants_dto(self, constants_dto):
+        ConnectionManager._constants_dto=constants_dto
 
     def get_database(self):
+        if self._db is None:
+            self.reconnect()
         return self._db
 
     def close(self):
@@ -24,20 +24,13 @@ class ConnectionManager(Singleton):
             self._db.close()
 
     def reconnect(self):
-        """
-        This automatically manages a pool of connections.
-
-        http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#pool
-        """
-        # self._db = MySQLDatabase(
         self._db = MyRetryDB(
-            database=MYSQL_DATABASE,
-            host= os.environ[MYSQL_HOST_ENV],
-            port= int(os.environ[MYSQL_PORT_ENV]),
-            user= MYSQL_USER,
-            password=MYSQL_PASS
+            database=ConnectionManager._constants_dto.mysql_database,
+            host= ConnectionManager._constants_dto.mysql_host,
+            port= ConnectionManager._constants_dto.mysql_port,
+            user= ConnectionManager._constants_dto.mysql_user,
+            password=ConnectionManager._constants_dto.mysql_pass
         )
-        # self._db.get_conn().ping(True)
 
 class MyRetryDB(RetryOperationalError, MySQLDatabase):
     pass
