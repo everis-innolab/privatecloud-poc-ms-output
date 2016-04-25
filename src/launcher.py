@@ -1,10 +1,9 @@
 import os
 import sys
+sys.path.append(os.getcwd())
 from src.controller.constants.constants_factory import ConstantsFactory
 from src.model.connection_manager import ConnectionManager
 from src.model.transaction import ProxyFactory
-
-sys.path.append(os.getcwd())
 from src.controller.eureka_properties_factory import EurekaPropertiesFactory
 from controller.logs.logger_factory import LoggerFactory
 from eurekalab.client import EurekaClient
